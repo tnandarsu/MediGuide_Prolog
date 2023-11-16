@@ -12,22 +12,33 @@ farewell :-
 
 contains_greeting(Statement) :-
     member(Word, ['hello', 'hi', 'hey', 'good morning', 'good afternoon']),
-    case_insensitive_contains(Statement, Word).
+    atom_lowercase(Statement, LowerStatement),
+    atom_lowercase(Word, LowerWord),
+    atom_contains(LowerStatement, LowerWord).
  
 contains_bye(Statement) :-
     member(Word, ['bye', 'exit', 'end', 'conclude', 'terminate', 'close', 'finsih']),
-    case_insensitive_contains(Statement, Word).
+    atom_lowercase(Statement, LowerStatement),
+    atom_lowercase(Word, LowerWord),
+    atom_contains(LowerStatement, LowerWord).
 %--------------------------------------------------------------------------
 % to find substring in user response
 
 atom_contains(Atom, Substring) :-
     sub_atom(Atom, _, _, _, Substring).
 %-------------------------------------------------------------------------------
-% Case-insensitive contains function
-case_insensitive_contains(Statement, Word) :-
-    atom_lowercase(Statement, LowerStatement),
-    atom_lowercase(Word, LowerWord),
-    atom_contains(LowerStatement, LowerWord).
+
+% Converts an atom to lowercase
+atom_lowercase(Atom, LowercaseAtom) :-
+    atom_chars(Atom, Chars),
+    maplist(lowercase_char, Chars, LowercaseChars),
+    atom_chars(LowercaseAtom, LowercaseChars).
+
+% Converts a single character to lowercase
+lowercase_char(Char, LowercaseChar) :-
+    char_code(Char, Code),
+    (Code >= 65, Code =< 90, !, LowercaseCode is Code + 32; LowercaseCode = Code),
+    char_code(LowercaseChar, LowercaseCode).
 %--------------------------------------------------------------------------------------
 % Diagnosis 
 contains_diagnose(Statement) :-
@@ -36,7 +47,9 @@ contains_diagnose(Statement) :-
         'health check', 'medical checkup', 'physical examination',
         'symptoms analysis', 'health evaluation', 'medical assessment'
     ]),
-    case_insensitive_contains(Statement, Word).
+    atom_lowercase(Statement, LowerStatement),
+    atom_lowercase(Word, LowerWord),
+    atom_contains(LowerStatement, LowerWord).
         
 response_to_diagnose :-
     user_name(Name), 
@@ -59,7 +72,9 @@ process_diagnosis(Illness) :-
 % Hotlines
 contains_hotline(Statement) :-
     member(Word, ['call','hotline', 'emergency number', 'contact', 'healthcare hotline']),
-    case_insensitive_contains(Statement, Word).
+    atom_lowercase(Statement, LowerStatement),
+    atom_lowercase(Word, LowerWord),
+    atom_contains(LowerStatement, LowerWord).
 
 response_hotline :-
     write_hotline_responses.
@@ -68,7 +83,9 @@ response_hotline :-
 % Hospitals
 contains_hospitals(Statement) :-
     member(Word, ['hospitals', 'hospital', 'medical facilities', 'healthcare centers']),
-    case_insensitive_contains(Statement, Word).
+    atom_lowercase(Statement, LowerStatement),
+    atom_lowercase(Word, LowerWord),
+    atom_contains(LowerStatement, LowerWord).
 
 trim_whitespace(String, Trimmed) :-
     atom_string(Atom, String),
@@ -79,7 +96,7 @@ response_hospitals :-
     write('Sure! In which city in Thailand are you currently located?'), nl,
     read_line_to_string(user_input, RawLocation),
     trim_whitespace(RawLocation, Location),
-    case_insensitive_contains(Location, LowercaseLocation),
+    atom_lowercase(Location, LowercaseLocation),
     get_hospitals(LowercaseLocation, HospitalList),
     nl,
     write('Here are some Hospitals near your area:'), nl,
