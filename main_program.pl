@@ -22,16 +22,10 @@ contains_bye(Statement) :-
     atom_lowercase(Word, LowerWord),
     atom_contains(LowerStatement, LowerWord).
 %--------------------------------------------------------------------------
+% to find substring in user response
+
 atom_contains(Atom, Substring) :-
-    atom_chars(Atom, Chars),
-    atom_chars(Substring, SubChars),
-    sublist(SubChars, Chars).
-    
-sublist([], _).
-sublist([H|T], [H|Rest]) :-
-    sublist(T, Rest).
-sublist(SubList, [_|Rest]) :-
-    sublist(SubList, Rest).
+    sub_atom(Atom, _, _, _, Substring).
 %-------------------------------------------------------------------------------
 
 % Converts an atom to lowercase
