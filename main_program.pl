@@ -5,10 +5,11 @@
 % greeting, bye, and contains function
 
 greeting :-
-    write('Hello! How can I assist you today? Type "bye" to exit.'), nl.
+    write('Hello! This is MediGuide, your next-gen healthcare sidekick! From answering FAQs to offering a friendly ear for mental health concerns and even helping you locate the nearest hospitals in Thailand - Consider me your healthcare genie ready to grant your wellness wishes!'), nl,
+    nl.
 
 farewell :-
-    write('Goodbye! Have a great day.'), nl.
+    write('Goodbye! Thank you for using our service. Have a great day.'), nl.
 
 contains_greeting(Statement) :-
     member(Word, ['hello', 'hi', 'hey', 'good morning', 'good afternoon']),
@@ -82,7 +83,7 @@ response_hotline :-
 
 % Hospitals
 contains_hospitals(Statement) :-
-    member(Word, ['hospitals', 'hospital', 'medical facilities', 'healthcare centers']),
+    member(Word, ['hospitals', 'medical facilities', 'healthcare centers', 'location', 'clinic']),
     atom_lowercase(Statement, LowerStatement),
     atom_lowercase(Word, LowerWord),
     atom_contains(LowerStatement, LowerWord).
@@ -91,33 +92,32 @@ trim_whitespace(String, Trimmed) :-
     atom_string(Atom, String),
     atom_string(Trimmed, Atom).
 
-% Updated response_hospitals/0 predicate
 response_hospitals :-
     write('Sure! In which city in Thailand are you currently located?'), nl,
     read_line_to_string(user_input, RawLocation),
     trim_whitespace(RawLocation, Location),
     atom_lowercase(Location, LowercaseLocation),
-    get_hospitals(LowercaseLocation, HospitalList),
-    nl,
-    write('Here are some Hospitals near your area:'), nl,
-    print_hospitals_details(HospitalList),
-    nl.
 
-% Updated print_hospitals/1 predicate to print details
+    write('What type of hospitals are you interested in? Do you wanna go to Private or Goverment ones?'), nl,
+    read_line_to_string(user_input, Preference),
+    atom_lowercase(Preference, LowercasePreference),
+    get_hospitals(LowercaseLocation, LowercasePreference, HospitalList), nl,
+    write('Here are some hospitals near '), write(Location), nl,
+    nl,
+    print_hospitals_details(HospitalList),
+
 print_hospitals_details([]).
 print_hospitals_details([Hospital | T]) :-
     write('- '), write(Hospital), nl,
     print_hospital_details(Hospital),
     print_hospitals_details(T).
 
-% New predicate to print details of a specific hospital
 print_hospital_details(Hospital) :-
     hospital(_, Hospital, Type, _, Address, OpeningTimes),
-    write('   Type: '), write(Type), nl,
-    write('   Address: '), write(Address), nl,
-    write('   Opening Times: '), write(OpeningTimes), nl.
-
-
+    write('Type: '), write(Type), nl,
+    write('Address: '), write(Address), nl,
+    write('Opening Times: '), write(OpeningTimes), nl,
+    nl.
 %-------------------------------------------------------------------------------
 
 % Introduction
