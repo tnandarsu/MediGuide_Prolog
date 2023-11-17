@@ -28,7 +28,7 @@ check_symptoms([], unknown) :-
 response_more_diagnosis(Statement) :-
     contains_no(Statement) ->
         write('You\'re welcome. Is there anything else I can assist you with?');
-    split_string(Statement, " ", " ", NewSymptomsList),
+    split_string(Statement, ",", " ", NewSymptomsList),
     symptoms_list(OldSymptomsList),
     append(OldSymptomsList, NewSymptomsList, UpdatedSymptomsList),
     retractall(symptoms_list(_)),  % Remove the old list
@@ -39,10 +39,12 @@ response_more_diagnosis(Statement) :-
     healthcare_tips_for_potential_illnesses(Illness).
     
 contains_no(Statement) :-
-    member(Word, ['no', 'n', 'nah', 'this is all', 'not really']),
-    atom_lowercase(Statement, LowerStatement),
-    atom_lowercase(Word, LowerWord),
-    atom_contains(LowerStatement, LowerWord).
+    atomic_list_concat(Words, ' ', Statement),
+    NoWords = ['no', 'n', 'nah'],
+    maplist(atom_lowercase, Words, LowerWords),
+    maplist(atom_lowercase, NoWords, LowerNoWords),
+    intersection(LowerWords, LowerNoWords, CommonWords),
+    \+ length(CommonWords, 0). 
 
 check_symptoms([Symptom | Rest], Illness) :-
     atom_string(TrimmedSymptom, Symptom),
