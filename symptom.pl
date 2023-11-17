@@ -21,6 +21,7 @@ check_symptoms([Symptom | Rest], Illness) :-
     length(PotentialIllnesses, TotalSymptoms),
     (MatchingSymptomsCount >= TotalSymptoms / 2 ->
         write('Suggested illness according to your symptoms: '), write(PotentialIllnesses), nl,
+        write('\nLet me provide some useful general tips for your Illnesses.'), nl,
         Illness = PotentialIllnesses; 
         check_symptoms(Rest, Illness)
     ).
