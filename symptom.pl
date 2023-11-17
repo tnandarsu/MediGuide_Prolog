@@ -1,11 +1,9 @@
-:- consult('kb_symptom.pl').
-:- consult('main_program.pl')
-
-:- dynamic(symptoms_list/1).
+:- discontiguous check_symptoms/2.
 diagnose(Illness) :-
     retractall(symptoms_list(_)),
     write('What symptoms do you have? (separated by space): '),
-    read_line_to_string(user_input, Symptoms),
+    read_line_to_string(user_input, RawSymptoms),
+    atom_lowercase(RawSymptoms, Symptoms),  % Convert to lowercase
     split_string(Symptoms, " ", " ", SymptomsList),
     assertz(symptoms_list(SymptomsList)),
     write('Symptoms List: '), write(SymptomsList), nl, 
