@@ -76,6 +76,7 @@ response_to_diagnose :-
     diagnose(Illness), nl,
     healthcare_tips_for_potential_illnesses(Illness).
 
+healthcare_tip_for_potential_illness([]).
 healthcare_tips_for_potential_illnesses([PotentialIllness | Rest]) :-
     write('Here are some healthcare tips for '), write(PotentialIllness), write(': '), nl,
     healthcare_tips(PotentialIllness, Tips),
