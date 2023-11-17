@@ -48,14 +48,21 @@ contains_no(Statement) :-
 
 check_symptoms([Symptom | Rest], Illness) :-
     atom_string(TrimmedSymptom, Symptom),
-    findall(PotentialIllness, symptom(TrimmedSymptom, PotentialIllness), PotentialIllnesses),
-    count_matching_symptoms(Rest, PotentialIllnesses, MatchingSymptomsCount),
-    length(PotentialIllnesses, TotalSymptoms),
-    (MatchingSymptomsCount >= TotalSymptoms / 2 ->
-        write('Suggested illness according to your symptoms: '), write(PotentialIllnesses), nl,
-        Illness = PotentialIllnesses; 
+    (is_valid_symptom(TrimmedSymptom) ->
+        findall(PotentialIllness, symptom(TrimmedSymptom, PotentialIllness), PotentialIllnesses),
+        count_matching_symptoms(Rest, PotentialIllnesses, MatchingSymptomsCount),
+        length(PotentialIllnesses, TotalSymptoms),
+        (MatchingSymptomsCount >= TotalSymptoms / 2 ->
+            write('Suggested illness according to your symptoms: '), write(PotentialIllnesses), nl,
+            Illness = PotentialIllnesses; 
+            check_symptoms(Rest, Illness)
+        );
+        write('Invalid symptom: '), write(Symptom), nl,
         check_symptoms(Rest, Illness)
     ).
+
+is_valid_symptom(Symptom) :-
+    symptom(Symptom, _).
 
 %-----------------------------------------------------------------------------
 count_matching_symptoms([], _, 0).
