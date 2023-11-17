@@ -28,8 +28,8 @@ response_more_diagnosis(Statement):-
     retractall(symptoms_list(_)),  % Remove the old list
     assertz(symptoms_list(UpdatedSymptomsList)),
     write('Symptoms List: '), write(UpdatedSymptomsList), nl, 
-    check_symptoms(UpdatedSymptomsList, Illness).
-    
+    check_symptoms(UpdatedSymptomsList, Illness),
+    healthcare_tips_for_potential_illnesses(Illness).
     
     
 contains_no(Statement) :-

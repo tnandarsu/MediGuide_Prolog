@@ -1,7 +1,11 @@
 :- consult('symptom.pl').
 :- consult('kb_symptom.pl').
+:- consult('symptom.pl').
+:- consult('kb_symptom.pl').
 :- consult('hotlines.pl').
 :- consult('hospitals.pl').
+:- consult('healthcare_tips.pl').
+
 % greeting, bye, and contains function
 
 :- dynamic(user_name/1).
@@ -35,7 +39,7 @@ response_start :-
     write('! How can I assist you today?'), nl.
 
 farewell :-
-    write('Goodbye! Have a great day.'), nl.
+    write('Goodbye! Thank you for using our service. Have a great day.'), nl.
 
 contains_greeting(Statement) :-
     member(Word, ['hello', 'hi', 'hey', 'good morning', 'good afternoon']),
@@ -71,7 +75,15 @@ lowercase_char(Char, LowercaseChar) :-
 % Diagnosis 
 
 response_to_diagnose :-
-    diagnose(_Illness).
+    diagnose(Illness), nl,
+    healthcare_tips_for_potential_illnesses(Illness).
+
+healthcare_tip_for_potential_illness([]).
+healthcare_tips_for_potential_illnesses([PotentialIllness | Rest]) :-
+    write('Here are some healthcare tips for '), write(PotentialIllness), write(': '), nl,
+    healthcare_tips(PotentialIllness, Tips),
+    write(Tips), nl,
+    healthcare_tips_for_potential_illnesses(Rest).
 
 contains_diagnose(Statement) :-
     member(Word, [
