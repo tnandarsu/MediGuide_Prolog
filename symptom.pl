@@ -10,6 +10,7 @@ diagnose(Illness) :-
     read_line_to_string(user_input, Symptoms),
     split_string(Symptoms, " ", " ", SymptomsList),
     assertz(symptoms_list(SymptomsList)),
+    write('Symptoms List: '), write(SymptomsList), nl, 
     check_symptoms(SymptomsList, Illness).
 
 % Call by diagnose -> check and suggest only the illness with more than half symptoms checked.
@@ -21,9 +22,15 @@ check_symptoms([], unknown) :-
 response_more_diagnosis(Statement):-
     contains_no(Statement) ->
         write('Your welcome, Is there anything I can assist you?');
-    split_string(Statement, " ", " ", SymptomsList),
-    assertz(symptoms_list(SymptomsList)),
-    check_symptoms(SymptomsList, Illness).
+    split_string(Statement, " ", " ", NewSymptomsList),
+    symptoms_list(OldSymptomsList),
+    append(OldSymptomsList, NewSymptomsList, UpdatedSymptomsList),
+    retractall(symptoms_list(_)),  % Remove the old list
+    assertz(symptoms_list(UpdatedSymptomsList)),
+    write('Symptoms List: '), write(UpdatedSymptomsList), nl, 
+    check_symptoms(UpdatedSymptomsList, Illness).
+    
+    
     
 contains_no(Statement) :-
     member(Word, ['no', 'n', 'nah', 'this is all', 'not really']),
