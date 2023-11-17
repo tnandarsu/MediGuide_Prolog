@@ -16,6 +16,7 @@ response(Statement) :-
     (
      contains_diagnose(Statement) -> response_to_diagnose;
      contains_greeting(Statement) -> write('Hi, How can I assist you today?');
+     contains_thankyou(Statement) -> write('Your welcome, Is there anything I can assist you?');
      contains_hotline(Statement) -> response_hotline;
      contains_hospitals(Statement) -> response_hospitals;
      contains_bye(Statement) -> farewell;
@@ -42,6 +43,12 @@ contains_greeting(Statement) :-
  
 contains_bye(Statement) :-
     member(Word, ['bye', 'exit', 'end', 'conclude', 'terminate', 'close', 'finsih']),
+    atom_lowercase(Statement, LowerStatement),
+    atom_lowercase(Word, LowerWord),
+    atom_contains(LowerStatement, LowerWord).
+
+contains_thankyou(Statement) :-
+    member(Word, ['thanks', 'thx', 'thank you', 'okay', 'ok', 'thank']),
     atom_lowercase(Statement, LowerStatement),
     atom_lowercase(Word, LowerWord),
     atom_contains(LowerStatement, LowerWord).
