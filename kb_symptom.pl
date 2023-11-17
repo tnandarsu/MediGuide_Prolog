@@ -4,12 +4,6 @@ symptom(cough, flu).
 symptom(runny_nose, flu).
 symptom(sore_throat, flu).
 
-%cold
-symptom(fever, cold).
-symptom(cough, cold).
-symptom(runny_nose, cold).
-symptom(sore_throat, cold).
-
 %migraine
 symptom(headache, migraine).
 symptom(sensitivity_to_light, migraine).
@@ -46,5 +40,5 @@ symptom(redness, general_skin_rash).
 symptom(itchiness, general_skin_rash).
 symptom(swelling, general_skin_rash).
 
-mental_symptom
+
 

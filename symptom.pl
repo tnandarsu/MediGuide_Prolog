@@ -1,18 +1,36 @@
 :- consult('kb_symptom.pl').
+:- consult('main_program.pl')
 
 :- dynamic(symptoms_list/1).
-symptoms_list([]).
 
 %receive user input and get symptom -> convert to list
 diagnose(Illness) :-
+    retractall(symptoms_list(_)),
     write('What symptoms do you have? (separated by space): '),
     read_line_to_string(user_input, Symptoms),
     split_string(Symptoms, " ", " ", SymptomsList),
+    assertz(symptoms_list(SymptomsList)),
     check_symptoms(SymptomsList, Illness).
 
 % Call by diagnose -> check and suggest only the illness with more than half symptoms checked.
 check_symptoms([], unknown) :-
-    write('I\'m sorry, I couldn\'t identify any specific illness based on the provided symptoms. Please consult a healthcare professional for a more accurate diagnosis.'), nl.
+    write('Can you provide more symptoms?'), nl,
+    read_line_to_string(user_input, UserInput),
+    response_more_diagnosis(UserInput).
+
+response_more_diagnosis(Statement):-
+    contains_no(Statement) ->
+        write('Your welcome, Is there anything I can assist you?');
+    split_string(Statement, " ", " ", SymptomsList),
+    assertz(symptoms_list(SymptomsList)),
+    check_symptoms(SymptomsList, Illness).
+    
+contains_no(Statement) :-
+    member(Word, ['no', 'n', 'nah', 'this is all', 'not really']),
+    atom_lowercase(Statement, LowerStatement),
+    atom_lowercase(Word, LowerWord),
+    atom_contains(LowerStatement, LowerWord).
+
 check_symptoms([Symptom | Rest], Illness) :-
     atom_string(TrimmedSymptom, Symptom),
     findall(PotentialIllness, symptom(TrimmedSymptom, PotentialIllness), PotentialIllnesses),
