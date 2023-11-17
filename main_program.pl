@@ -1,15 +1,41 @@
-%:-consult('symptom.pl').
-:-consult('hotlines.pl').
-:-consult('hospitals.pl').
-
+:- consult('symptom.pl').
+:- consult('kb_symptom.pl').
+:- consult('hotlines.pl').
+:- consult('hospitals.pl').
 % greeting, bye, and contains function
 
-greeting :-
-    write('Hello! This is MediGuide, your next-gen healthcare sidekick! From answering FAQs to offering a friendly ear for mental health concerns and even helping you locate the nearest hospitals in Thailand - Consider me your healthcare genie ready to grant your wellness wishes!'), nl,
-    nl.
+:- dynamic(user_name/1).
+% Main interaction loop
+chat :-
+    response_start,
+    repeat,
+    read_line_to_string(user_input, UserInput),
+    response(UserInput),
+    contains_bye(UserInput),
+    !.
+
+response(Statement) :-
+    (
+     contains_diagnose(Statement) -> response_to_diagnose;
+     contains_greeting(Statement) -> write('Hi, How can I assist you today?');
+     contains_thankyou(Statement) -> write('Your welcome, Is there anything I can assist you?');
+     contains_hotline(Statement) -> response_hotline;
+     contains_hospitals(Statement) -> response_hospitals;
+     contains_bye(Statement) -> farewell;
+     write('I did not understand that. Can you please rephrase?')
+    ).
+
+response_start :-
+    write('Hello! This is MediGuide, your healthcare assistance. We\'re here to assist you with symptoms diagnosis, mental health issues, hotlines number or even finding hospital too.'), nl,
+    write('What should I call you?'), nl,
+    read_line_to_string(user_input, Name),
+    assertz(user_name(Name)),
+    write('Nice to meet you, '),
+    write(Name), 
+    write('! How can I assist you today?'), nl.
 
 farewell :-
-    write('Goodbye! Thank you for using our service. Have a great day.'), nl.
+    write('Goodbye! Have a great day.'), nl.
 
 contains_greeting(Statement) :-
     member(Word, ['hello', 'hi', 'hey', 'good morning', 'good afternoon']),
@@ -22,26 +48,31 @@ contains_bye(Statement) :-
     atom_lowercase(Statement, LowerStatement),
     atom_lowercase(Word, LowerWord),
     atom_contains(LowerStatement, LowerWord).
-%--------------------------------------------------------------------------
-% to find substring in user response
+
+contains_thankyou(Statement) :-
+    member(Word, ['thanks', 'thx', 'thank you', 'okay', 'ok', 'thank']),
+    atom_lowercase(Statement, LowerStatement),
+    atom_lowercase(Word, LowerWord),
+    atom_contains(LowerStatement, LowerWord).
 
 atom_contains(Atom, Substring) :-
     sub_atom(Atom, _, _, _, Substring).
-%-------------------------------------------------------------------------------
 
-% Converts an atom to lowercase
 atom_lowercase(Atom, LowercaseAtom) :-
     atom_chars(Atom, Chars),
     maplist(lowercase_char, Chars, LowercaseChars),
     atom_chars(LowercaseAtom, LowercaseChars).
 
-% Converts a single character to lowercase
 lowercase_char(Char, LowercaseChar) :-
     char_code(Char, Code),
     (Code >= 65, Code =< 90, !, LowercaseCode is Code + 32; LowercaseCode = Code),
     char_code(LowercaseChar, LowercaseCode).
 %--------------------------------------------------------------------------------------
 % Diagnosis 
+
+response_to_diagnose :-
+    diagnose(_Illness).
+
 contains_diagnose(Statement) :-
     member(Word, [
         'diagnosis', 'check up', 'examination', 'health assessment',
@@ -51,25 +82,7 @@ contains_diagnose(Statement) :-
     atom_lowercase(Statement, LowerStatement),
     atom_lowercase(Word, LowerWord),
     atom_contains(LowerStatement, LowerWord).
-        
-response_to_diagnose :-
-    user_name(Name), 
-    write('Can you provide your symptoms, '), write(Name), write('?'),
-    read_line_to_string(user_input, Symptoms),
-    process_symptoms(Symptoms).
-
-process_symptoms(Symptoms) :-
-    atomic_list_concat(AtomList, ',', Symptoms),
-    diagnose(Illness, AtomList),
-    process_diagnosis(Illness).
-    
-process_diagnosis(unknown) :-
-    write('I couldn\'t diagnose your illness based on the provided symptoms. Please consult a healthcare professional.'), nl.
-    
-process_diagnosis(Illness) :-
-    write('Based on your symptoms, you may have '), write(Illness), write('. Please consult a healthcare professional for further evaluation.'), nl.
 %-------------------------------------------------------------------------------  
-
 % Hotlines
 contains_hotline(Statement) :-
     member(Word, ['call','hotline', 'emergency number', 'contact', 'healthcare hotline']),
@@ -118,34 +131,3 @@ print_hospital_details(Hospital) :-
     write('Address: '), write(Address), nl,
     write('Opening Times: '), write(OpeningTimes), nl,
     nl.
-%-------------------------------------------------------------------------------
-
-% Introduction
-:- dynamic(user_name/1).
-response_start :-
-    write('What should I call you?'), nl, 
-    read_line_to_string(user_input, Name),
-    assertz(user_name(Name)),
-    write('Nice to meet you, '),
-    write(Name), 
-    write('! How can I assist you today?'), nl.
-
-% Check
-response(Statement) :-
-    (
-     contains_diagnose(Statement) -> response_to_diagnose;
-     contains_greeting(Statement) -> response_start;
-     contains_hotline(Statement) -> response_hotline;
-     contains_hospitals(Statement) -> response_hospitals;
-     contains_bye(Statement) -> farewell;
-     write('I did not understand that. Can you please rephrase?')
-    ).
-
-% Main interaction loop
-chat :-
-    greeting,
-    repeat,
-    read_line_to_string(user_input, UserInput),
-    response(UserInput),
-    contains_bye(UserInput),
-    !.
