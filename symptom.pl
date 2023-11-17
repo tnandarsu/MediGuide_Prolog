@@ -1,29 +1,40 @@
 :- discontiguous check_symptoms/2.
+
 diagnose(Illness) :-
     retractall(symptoms_list(_)),
-    write('What symptoms do you have? (separated by space): '),
+    write('What symptoms do you have? (separated by commas): '),
     read_line_to_string(user_input, RawSymptoms),
     atom_lowercase(RawSymptoms, Symptoms),  % Convert to lowercase
-    split_string(Symptoms, " ", " ", SymptomsList),
-    assertz(symptoms_list(SymptomsList)),
-    write('Symptoms List: '), write(SymptomsList), nl, 
-    check_symptoms(SymptomsList, Illness).
+    replace_and_with_comma(Symptoms, SymptomsWithCommas),
+    split_string(SymptomsWithCommas, ",", " ", SymptomsList),
+    remove_empty_strings(SymptomsList, CleanedSymptoms),
+    assertz(symptoms_list(CleanedSymptoms)),
+    format('You are having ~w. ', [CleanedSymptoms]),  % Display the symptoms to the user
+    check_symptoms(CleanedSymptoms, Illness).
 
-% Call by diagnose -> check and suggest only the illness with more than half symptoms checked.
+replace_and_with_comma(Input, Output) :-
+    atomic_list_concat(Split, 'and', Input),
+    atomic_list_concat(Split, ',', Output).
+    
+remove_empty_strings([], []).
+remove_empty_strings([String|Rest], Cleaned) :-
+    (String = "" -> remove_empty_strings(Rest, Cleaned) ; Cleaned = [String|RestCleaned], remove_empty_strings(Rest, RestCleaned)).
+
 check_symptoms([], unknown) :-
     write('Can you provide more symptoms?'), nl,
     read_line_to_string(user_input, UserInput),
     response_more_diagnosis(UserInput).
 
-response_more_diagnosis(Statement):-
+response_more_diagnosis(Statement) :-
     contains_no(Statement) ->
-        write('Your welcome, Is there anything I can assist you?');
+        write('You\'re welcome. Is there anything else I can assist you with?');
     split_string(Statement, " ", " ", NewSymptomsList),
     symptoms_list(OldSymptomsList),
     append(OldSymptomsList, NewSymptomsList, UpdatedSymptomsList),
     retractall(symptoms_list(_)),  % Remove the old list
     assertz(symptoms_list(UpdatedSymptomsList)),
-    write('Symptoms List: '), write(UpdatedSymptomsList), nl, 
+    write('Symptoms List: '), write(UpdatedSymptomsList), nl,
+    format('You are having ~w. ', [UpdatedSymptomsList]),  % Display the updated symptoms to the user
     check_symptoms(UpdatedSymptomsList, Illness),
     healthcare_tips_for_potential_illnesses(Illness).
     
