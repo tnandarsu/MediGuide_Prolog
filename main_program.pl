@@ -74,7 +74,6 @@ lowercase_char(Char, LowercaseChar) :-
 
 response_to_diagnose :-
     diagnose(Illness), nl,
-    write('\nLet me provide some useful general tips for your Illnesses.'), nl,
     healthcare_tips_for_potential_illnesses(Illness).
 
 healthcare_tips_for_potential_illnesses([PotentialIllness | Rest]) :-
