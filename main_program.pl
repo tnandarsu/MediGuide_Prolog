@@ -3,6 +3,7 @@
 :- consult('hotlines.pl').
 :- consult('hospitals.pl').
 :- consult('healthcare_tips.pl').
+:- consult('mental_health_screening.pl').
 
 % greeting, bye, and contains function
 
@@ -21,6 +22,7 @@ response(Statement) :-
      contains_diagnose(Statement) -> response_to_diagnose;
      contains_greeting(Statement) -> write('Hi, How can I assist you today?');
      contains_thankyou(Statement) -> write('Your welcome, Is there anything I can assist you?');
+     contains_mental(Statement) -> response_mental_health_screening;
      contains_hotline(Statement) -> response_hotline;
      contains_hospitals(Statement) -> response_hospitals;
      contains_bye(Statement) -> farewell;
@@ -141,3 +143,22 @@ print_hospital_details(Hospital) :-
     write('Address: '), write(Address), nl,
     write('Opening Times: '), write(OpeningTimes), nl,
     nl.
+%--------------------------------------------------------------------------------
+
+% mental health
+
+contains_mental(Statement) :-
+    atom_lowercase(Statement, LowerStatement),
+    member(Word, ['mental']),
+    atom_lowercase(Word, LowerWord),
+    atom_contains(LowerStatement, LowerWord),
+    !.
+
+response_mental_health_screening :-
+    mental_health_screening_options(Options),
+    write('Which mental health screening would you like to perform?'), nl,
+    display_options(Options),
+    read_line_to_string(user_input, SelectedOption),
+    write('Selected Option: '), write(SelectedOption), nl,
+    process_mental_health_screening(SelectedOption).
+
