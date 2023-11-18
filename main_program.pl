@@ -19,9 +19,10 @@ chat :-
 
 response(Statement) :-
     (
-     contains_diagnose(Statement) -> response_to_diagnose;
+     
      contains_greeting(Statement) -> write('Hi, How can I assist you today?');
      contains_thankyou(Statement) -> write('Your welcome, Is there anything I can assist you?');
+     contains_diagnose(Statement) -> response_to_diagnose;
      contains_mental(Statement) -> response_mental_health_screening;
      contains_hotline(Statement) -> response_hotline;
      contains_hospitals(Statement) -> response_hospitals;
@@ -149,16 +150,14 @@ print_hospital_details(Hospital) :-
 
 contains_mental(Statement) :-
     atom_lowercase(Statement, LowerStatement),
-    member(Word, ['mental']),
+    member(Word, ['mental', 'emotional', 'psychological', 'well-being']),
     atom_lowercase(Word, LowerWord),
-    atom_contains(LowerStatement, LowerWord),
-    !.
+    atom_contains(LowerStatement, LowerWord).
 
 response_mental_health_screening :-
     mental_health_screening_options(Options),
     write('Which mental health screening would you like to perform?'), nl,
     display_options(Options),
     read_line_to_string(user_input, SelectedOption),
-    write('Selected Option: '), write(SelectedOption), nl,
     process_mental_health_screening(SelectedOption).
 
