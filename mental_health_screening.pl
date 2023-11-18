@@ -11,7 +11,7 @@ mental_health_screening_options([
 % Scoring threshold for further evaluation
 scoring_threshold(0).
 
-screening_questions('ADHD', [
+screening_questions('adhd', [
     'Do you find it difficult to sustain attention in tasks or play activities?',
     'Are you easily distracted by unrelated stimuli?',
     'Do you frequently forget daily tasks or appointments?',
@@ -19,7 +19,7 @@ screening_questions('ADHD', [
     'Is it challenging for you to organize tasks or activities?'
 ]).
 
-screening_questions('Depression', [
+screening_questions('depression', [
     'Over the past two weeks, how often have you felt down, depressed, or hopeless?',
     'Have you experienced a significant change in appetite or weight recently?',
     'How is your sleep quality lately?',
@@ -27,7 +27,7 @@ screening_questions('Depression', [
     'Are you struggling with feelings of worthlessness or excessive guilt?'
 ]).
 
-screening_questions('Anxiety', [
+screening_questions('anxiety', [
     'How often do you feel nervous or anxious?',
     'Do you experience sudden, intense feelings of fear or panic?',
     'Are you bothered by excessive worry or overthinking?',
@@ -35,7 +35,7 @@ screening_questions('Anxiety', [
     'Do you avoid situations or activities due to fear or anxiety?'
 ]).
 
-screening_questions('OCD', [
+screening_questions('ocd', [
     'Do you experience persistent, unwanted thoughts or images that cause anxiety?',
     'Are you compelled to perform repetitive behaviors or mental acts to reduce anxiety?',
     'How much time per day do you spend on these repetitive behaviors or rituals?',
@@ -43,7 +43,7 @@ screening_questions('OCD', [
     'Have you noticed an increase in distress when you try to resist the compulsions?'
 ]).
 
-screening_questions('PTSD', [
+screening_questions('ptsd', [
     'Have you experienced a traumatic event that continues to cause distress?',
     'Do you have recurring, involuntary memories, flashbacks, or nightmares related to the trauma?',
     'Do you actively avoid reminders or situations associated with the traumatic event?',
@@ -57,7 +57,8 @@ display_options(Options) :-
     format('~w\n', [Options]).
 
 process_mental_health_screening(SelectedOption) :-
-    trim_whitespace(SelectedOption, CleanedOption),
+    trim_whitespace(SelectedOption, Option),
+    atom_lowercase(Option, CleanedOption),
     write('Selected Option: '), write(CleanedOption), nl,
     screening_questions(CleanedOption, Questions),
     write('### '), write(CleanedOption), write(' Screening:'), nl,
@@ -95,7 +96,7 @@ get_response_score(Score) :-
     atom_number(Response, Score),
     Score >= 0, Score =< 4,
     !.
-    
+
 calculate_percentage(Total, Percentage) :-
     scoring_threshold(Threshold),
     Percentage is Total / 20, % Assuming 5 questions with a maximum score of 4 each
