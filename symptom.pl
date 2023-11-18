@@ -10,7 +10,7 @@ diagnose(Illness) :-
     remove_empty_strings(SymptomsList, CleanedSymptoms),
     remove_invalid_symptoms(CleanedSymptoms, ValidSymptoms),
     assertz(symptoms_list(ValidSymptoms)),
-    format('So, you are having ~w. ', [ValidSymptoms]),
+    format('This is the list of symptoms you are feeling: ~w. ', [ValidSymptoms]),
     check_symptoms(ValidSymptoms, Illness).
 
 replace_and_with_comma(Input, Output) :-
@@ -27,18 +27,24 @@ check_symptoms([], unknown) :-
     response_more_diagnosis(UserInput).
 
 response_more_diagnosis(Statement) :-
-    contains_no(Statement) ->
-        write('You\'re welcome. Is there anything else I can assist you with?');
-    split_string(Statement, ",", " ", NewSymptomsList),
-    symptoms_list(OldSymptomsList),
-    remove_invalid_symptoms(NewSymptomsList, ValidSymptoms),
-    append(OldSymptomsList, ValidSymptoms, UpdatedSymptomsList),
-    retractall(symptoms_list(_)),
-    assertz(symptoms_list(UpdatedSymptomsList)),
-    write('This is the list of symptoms you are feeling: '), write(UpdatedSymptomsList), nl,
-    format('So, you are having ~w. ', [UpdatedSymptomsList]),
-    check_symptoms(UpdatedSymptomsList, Illness),
-    healthcare_tips_for_potential_illnesses(Illness).
+    (
+        contains_no(Statement) ->
+            write('You\'re welcome. Is there anything else I can assist you with?');
+        split_string(Statement, ",", " ", NewSymptomsList),
+        symptoms_list(OldSymptomsList),
+        remove_invalid_symptoms(NewSymptomsList, ValidSymptoms),
+        append(OldSymptomsList, ValidSymptoms, UpdatedSymptomsList),
+        retractall(symptoms_list(_)),
+        assertz(symptoms_list(UpdatedSymptomsList)),
+        (
+            UpdatedSymptomsList = [] ->
+                write('Are you feeling well? Please provide valid symptoms.'),
+                response_more_diagnosis(Statement);
+            write('This is the list of symptoms you are feeling: '), write(UpdatedSymptomsList), nl,
+            check_symptoms(UpdatedSymptomsList, Illness),
+            healthcare_tips_for_potential_illnesses(Illness)
+        )
+    ).
 
 remove_invalid_symptoms([], []).
 remove_invalid_symptoms([Symptom | Rest], ValidSymptoms) :-
