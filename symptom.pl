@@ -8,9 +8,10 @@ diagnose(Illness) :-
     replace_and_with_comma(Symptoms, SymptomsWithCommas),
     split_string(SymptomsWithCommas, ",", " ", SymptomsList),
     remove_empty_strings(SymptomsList, CleanedSymptoms),
-    assertz(symptoms_list(CleanedSymptoms)),
-    format('You are having ~w. ', [CleanedSymptoms]),
-    check_symptoms(CleanedSymptoms, Illness).
+    remove_invalid_symptoms(CleanedSymptoms, ValidSymptoms),
+    assertz(symptoms_list(ValidSymptoms)),
+    format('You are having ~w. ', [ValidSymptoms]),
+    check_symptoms(ValidSymptoms, Illness).
 
 replace_and_with_comma(Input, Output) :-
     atomic_list_concat(Split, 'and', Input),
@@ -30,13 +31,24 @@ response_more_diagnosis(Statement) :-
         write('You\'re welcome. Is there anything else I can assist you with?');
     split_string(Statement, ",", " ", NewSymptomsList),
     symptoms_list(OldSymptomsList),
-    append(OldSymptomsList, NewSymptomsList, UpdatedSymptomsList),
-    retractall(symptoms_list(_)),  % Remove the old list
+    remove_invalid_symptoms(NewSymptomsList, ValidSymptoms),
+    append(OldSymptomsList, ValidSymptoms, UpdatedSymptomsList),
+    retractall(symptoms_list(_)),
     assertz(symptoms_list(UpdatedSymptomsList)),
     write('Symptoms List: '), write(UpdatedSymptomsList), nl,
-    format('You are having ~w. ', [UpdatedSymptomsList]),  % Display the updated symptoms to the user
+    format('You are having ~w. ', [UpdatedSymptomsList]),
     check_symptoms(UpdatedSymptomsList, Illness),
     healthcare_tips_for_potential_illnesses(Illness).
+
+remove_invalid_symptoms([], []).
+remove_invalid_symptoms([Symptom | Rest], ValidSymptoms) :-
+    atom_string(TrimmedSymptom, Symptom),
+    (is_valid_symptom(TrimmedSymptom) ->
+        ValidSymptoms = [Symptom | RestValid],
+        remove_invalid_symptoms(Rest, RestValid);
+        write('Invalid symptom: '), write(Symptom), nl,
+        remove_invalid_symptoms(Rest, ValidSymptoms)
+    ).
     
 contains_no(Statement) :-
     atomic_list_concat(Words, ' ', Statement),
