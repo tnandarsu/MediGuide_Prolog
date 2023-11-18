@@ -8,6 +8,18 @@ mental_health_screening_options([
     'PTSD'
 ]).
 
+% Valid mental health options in lowercase
+mental_health('adhd').
+mental_health('depression').
+mental_health('anxiety').
+mental_health('ocd').
+mental_health('ptsd').
+
+% Check if the provided mental health option is valid
+is_valid_mental(Option) :-
+    atom_lowercase(Option, LowerOption),
+    mental_health(LowerOption).
+
 % Scoring threshold for further evaluation
 scoring_threshold(0).
 
@@ -59,16 +71,22 @@ display_options(Options) :-
 process_mental_health_screening(SelectedOption) :-
     trim_whitespace(SelectedOption, Option),
     atom_lowercase(Option, CleanedOption),
-    write('Selected Option: '), write(CleanedOption), nl,
-    screening_questions(CleanedOption, Questions),
-    write('### '), write(CleanedOption), write(' Screening:'), nl,
-    perform_screening(Questions, 0, Total),
-    calculate_percentage(Total, Percentage),
-    write('### Scoring:'), nl,
-    format('Total Score: ~w~n', [Total]),
-    format('Percentage: ~2f%~n', [Percentage * 100]),
-    above_threshold(Percentage).
-
+    (
+        mental_health(CleanedOption) ->
+            write('Selected Option: '), write(CleanedOption), nl,
+            screening_questions(CleanedOption, Questions),
+            write('### '), write(CleanedOption), write(' Screening:'), nl,
+            perform_screening(Questions, 0, Total),
+            calculate_percentage(Total, Percentage),
+            write('### Scoring:'), nl,
+            format('Total Score: ~w~n', [Total]),
+            format('Percentage: ~2f%~n', [Percentage * 100]),
+            above_threshold(Percentage)
+    ;
+        write('We cannot handle this option right now. Please choose one from the list.'), nl,
+        response_mental_health_screening
+    ).
+    
 trim_whitespace(Input, Output) :-
     atom_string(Input, InputString),
     trim_whitespace_string(InputString, TrimmedString),
@@ -110,22 +128,10 @@ calculate_percentage(Total, Percentage) :-
 
 above_threshold(Percentage) :-
     (Percentage >= 0.8) ->
-        write('Your score suggests a high likelihood of the mental health disorder. It is advisable to seek further help from a professional.'), nl;
-    write('Your score is still considered normal, however, consider monitoring your mental health and seeking support if needed.'), nl.
+        write('Your score suggests a high likelihood of the mental health disorder. It\'s important to prioritize your mental health. If you have ongoing concerns, it is advisable to seek further help from a professional.'), nl;
+    write('Your score is still considered normal, however, consider monitoring your mental health and seeking support if needed.If you ever feel the need to talk or seek support, consider reaching out to friends, family, or a mental health professional.'), nl.
     
 above_threshold(_).
 
-evaluate_mental_health_screening([]) :-
-    write('Thank you for completing the mental health screening. If you have concerns, consider consulting a mental health professional.').
-evaluate_mental_health_screening([Question | Rest]) :-
-    write(Question), nl,
-    read_line_to_string(user_input, Answer),
-    process_mental_health_screening_answer(Answer),
-    evaluate_mental_health_screening(Rest).
 
-process_mental_health_screening_answer('yes') :-
-    write('It\'s important to prioritize your mental health. If you have ongoing concerns, consider consulting a mental health professional.'), nl.
-process_mental_health_screening_answer('no') :-
-    write('If you ever feel the need to talk or seek support, consider reaching out to friends, family, or a mental health professional.'), nl.
-process_mental_health_screening_answer(_) :-
-    write('Invalid response. Please answer with "yes" or "no".'), nl.
+
