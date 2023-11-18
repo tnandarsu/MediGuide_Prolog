@@ -1,19 +1,16 @@
-% Mental health screening options
+% Mental health options
+
 mental_health_screening_options([
     'ADHD',
     'Depression',
     'Anxiety',
-    'Narcissism',
     'OCD',
-    'PTSD',
-    'Eating Disorders',
-    'Chronic Stress'
+    'PTSD'
 ]).
 
 % Scoring threshold for further evaluation
 scoring_threshold(0).
 
-% Screening questions for each option
 screening_questions('ADHD', [
     'Do you find it difficult to sustain attention in tasks or play activities?',
     'Are you easily distracted by unrelated stimuli?',
@@ -38,7 +35,21 @@ screening_questions('Anxiety', [
     'Do you avoid situations or activities due to fear or anxiety?'
 ]).
 
-% Add similar sections for other screening options
+screening_questions('OCD', [
+    'Do you experience persistent, unwanted thoughts or images that cause anxiety?',
+    'Are you compelled to perform repetitive behaviors or mental acts to reduce anxiety?',
+    'How much time per day do you spend on these repetitive behaviors or rituals?',
+    'Do these thoughts and behaviors interfere with your daily activities or relationships?',
+    'Have you noticed an increase in distress when you try to resist the compulsions?'
+]).
+
+screening_questions('PTSD', [
+    'Have you experienced a traumatic event that continues to cause distress?',
+    'Do you have recurring, involuntary memories, flashbacks, or nightmares related to the trauma?',
+    'Do you actively avoid reminders or situations associated with the traumatic event?',
+    'Are you experiencing negative changes in mood, thoughts, or feelings since the trauma?',
+    'Have you noticed heightened arousal, such as difficulty sleeping, irritability, or exaggerated startle responses?'
+]).
 
 display_options([]) :-
     write('No screening options available.').
@@ -84,6 +95,7 @@ get_response_score(Score) :-
     atom_number(Response, Score),
     Score >= 0, Score =< 4,
     !.
+    
 calculate_percentage(Total, Percentage) :-
     scoring_threshold(Threshold),
     Percentage is Total / 20, % Assuming 5 questions with a maximum score of 4 each
@@ -92,7 +104,7 @@ calculate_percentage(Total, Percentage) :-
 above_threshold(Percentage) :-
     (Percentage >= 0.8) ->
         write('Your score suggests a high likelihood of the mental health disorder. It is advisable to seek further help from a professional.'), nl;
-    write('Your score is still considered normal, however, mental health is important.'), nl.
+    write('Your score is still considered normal, however, consider monitoring your mental health and seeking support if needed.'), nl.
     
 above_threshold(_).
 
