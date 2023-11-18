@@ -1,3 +1,5 @@
+% main_program.pl
+
 :- consult('symptom.pl').
 :- consult('kb_symptom.pl').
 :- consult('hotlines.pl').
@@ -97,6 +99,7 @@ contains_diagnose(Statement) :-
     atom_contains(LowerStatement, LowerWord).
 %-------------------------------------------------------------------------------  
 % Hotlines
+
 contains_hotline(Statement) :-
     member(Word, ['call','hotline', 'emergency number', 'contact', 'healthcare hotline']),
     atom_lowercase(Statement, LowerStatement),
@@ -106,8 +109,8 @@ contains_hotline(Statement) :-
 response_hotline :-
     write_hotline_responses.
 %---------------------------------------------------------------------------------
-
 % Hospitals
+
 contains_hospitals(Statement) :-
     member(Word, ['hospitals', 'medical facilities', 'healthcare centers', 'location', 'clinic']),
     atom_lowercase(Statement, LowerStatement),
