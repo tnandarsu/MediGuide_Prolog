@@ -2,7 +2,7 @@
 
 diagnose(Illness) :-
     retractall(symptoms_list(_)),
-    write('What symptoms do you have? (separated by commas): '),
+    write('What symptoms are you having now? (separated by commas): '),
     read_line_to_string(user_input, RawSymptoms),
     atom_lowercase(RawSymptoms, Symptoms),  % Convert to lowercase
     replace_and_with_comma(Symptoms, SymptomsWithCommas),
@@ -10,7 +10,7 @@ diagnose(Illness) :-
     remove_empty_strings(SymptomsList, CleanedSymptoms),
     remove_invalid_symptoms(CleanedSymptoms, ValidSymptoms),
     assertz(symptoms_list(ValidSymptoms)),
-    format('You are having ~w. ', [ValidSymptoms]),
+    format('So, you are having ~w. ', [ValidSymptoms]),
     check_symptoms(ValidSymptoms, Illness).
 
 replace_and_with_comma(Input, Output) :-
@@ -35,8 +35,8 @@ response_more_diagnosis(Statement) :-
     append(OldSymptomsList, ValidSymptoms, UpdatedSymptomsList),
     retractall(symptoms_list(_)),
     assertz(symptoms_list(UpdatedSymptomsList)),
-    write('Symptoms List: '), write(UpdatedSymptomsList), nl,
-    format('You are having ~w. ', [UpdatedSymptomsList]),
+    write('This is the list of symptoms you are feeling: '), write(UpdatedSymptomsList), nl,
+    format('So, you are having ~w. ', [UpdatedSymptomsList]),
     check_symptoms(UpdatedSymptomsList, Illness),
     healthcare_tips_for_potential_illnesses(Illness).
 
@@ -46,7 +46,7 @@ remove_invalid_symptoms([Symptom | Rest], ValidSymptoms) :-
     (is_valid_symptom(TrimmedSymptom) ->
         ValidSymptoms = [Symptom | RestValid],
         remove_invalid_symptoms(Rest, RestValid);
-        write('Invalid symptom: '), write(Symptom), nl,
+        write('It seems like you provide the invalid symptom.'), nl,
         remove_invalid_symptoms(Rest, ValidSymptoms)
     ).
     
@@ -65,11 +65,11 @@ check_symptoms([Symptom | Rest], Illness) :-
         count_matching_symptoms(Rest, PotentialIllnesses, MatchingSymptomsCount),
         length(PotentialIllnesses, TotalSymptoms),
         (MatchingSymptomsCount >= TotalSymptoms / 2 ->
-            write('Suggested illness according to your symptoms: '), write(PotentialIllnesses), nl,
+            write('I will suggest some illnesses according to your symptoms: '), write(PotentialIllnesses), nl,
             Illness = PotentialIllnesses; 
             check_symptoms(Rest, Illness)
         );
-        write('Invalid symptom: '), write(Symptom), nl,
+        write('It seems like you provide the invalid symptom. '), write(Symptom), nl,
         check_symptoms(Rest, Illness)
     ).
 

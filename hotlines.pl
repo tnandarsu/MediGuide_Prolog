@@ -30,19 +30,19 @@ process_hotline_category(Other) :-
     fail.
 
 write_medical_hotlines :-
-    write('Here Medical Emergency Hotlines:'), nl,
+    write('Here are Medical Emergency Hotlines:'), nl,
     write('- Thailand Emergency Medical Services (EMS): 1669'), nl,
     write('- Thai Red Cross Society: 1554'), nl,
     nl.
 
 write_mental_health_hotlines :-
-    write('Here Mental Health Support Hotlines:'), nl,
+    write('Here are Mental Health Support Hotlines:'), nl,
     write('- National Suicide Prevention Lifeline: 1-800-273-TALK'), nl,
     write('- Thailand Mental Health Hotline: 1323'), nl,
     nl.
 
 write_general_assistance_hotlines :-
-    write('General Assistance Hotlines:'), nl,
+    write('Here are General Assistance Hotlines:'), nl,
     write('- Emergency Police Assistance: 191'), nl,
     write('- Tourist Police: 1155'), nl,
     nl.

@@ -8,19 +8,16 @@ mental_health_screening_options([
     'PTSD'
 ]).
 
-% Valid mental health options in lowercase
 mental_health('adhd').
 mental_health('depression').
 mental_health('anxiety').
 mental_health('ocd').
 mental_health('ptsd').
 
-% Check if the provided mental health option is valid
 is_valid_mental(Option) :-
     atom_lowercase(Option, LowerOption),
     mental_health(LowerOption).
-
-% Scoring threshold for further evaluation
+    
 scoring_threshold(0).
 
 screening_questions('adhd', [
@@ -69,7 +66,7 @@ display_options(Options) :-
     format('~w\n', [Options]).
 
 process_mental_health_screening(SelectedOption) :-
-    trim_whitespace(SelectedOption, Option),
+    trim_whitespace_mh(SelectedOption, Option),
     atom_lowercase(Option, CleanedOption),
     (
         mental_health(CleanedOption) ->
@@ -83,11 +80,11 @@ process_mental_health_screening(SelectedOption) :-
             format('Percentage: ~2f%~n', [Percentage * 100]),
             above_threshold(Percentage)
     ;
-        write('We cannot handle this option right now. Please choose one from the list.'), nl,
+        write('I am so sorry. We cannot handle this option right now. Please choose one from the list.'), nl,
         response_mental_health_screening
     ).
-    
-trim_whitespace(Input, Output) :-
+
+trim_whitespace_mh(Input, Output) :-
     atom_string(Input, InputString),
     trim_whitespace_string(InputString, TrimmedString),
     atom_string(Output, TrimmedString).
@@ -117,9 +114,8 @@ validate_response(Response, Score) :-
     between(0, 4, Score), % Ensure the score is between 0 and 4
     !.
 validate_response(_, Score) :-
-    write('Invalid response. Please provide a valid answer from 0 to 4.'), nl,
+    write('I\'m sorry. Your response seems invalid. Please provide a valid answer from 0 to 4.'), nl,
     get_response_score(Score).
-
 
 calculate_percentage(Total, Percentage) :-
     scoring_threshold(Threshold),

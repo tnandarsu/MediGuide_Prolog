@@ -31,7 +31,7 @@ response(Statement) :-
     ).
 
 response_start :-
-    write('Hello! This is MediGuide, your healthcare assistance. We\'re here to assist you with symptoms diagnosis, mental health issues, hotlines number or even finding hospital too.'), nl,
+    write('Hello! This is MediGuide, your healthcare assistance. We\'re here to assist you with symptoms diagnosis, mental health issues, hotlines number or even finding hospitals too.'), nl,
     write('What should I call you?'), nl,
     read_line_to_string(user_input, Name),
     assertz(user_name(Name)),
@@ -119,12 +119,12 @@ trim_whitespace(String, Trimmed) :-
     atom_string(Trimmed, Atom).
 
 response_hospitals :-
-    write('Sure! In which city in Thailand are you currently located?'), nl,
+    write('Sure! In which city in Thailand are you currently living in?'), nl,
     read_line_to_string(user_input, RawLocation),
     trim_whitespace(RawLocation, Location),
     atom_lowercase(Location, LowercaseLocation),
 
-    write('What type of hospitals are you interested in? Do you wanna go to Private or Goverment ones?'), nl,
+    write('What type of hospitals are you interested in? Do you wanna go to private or goverment ones?'), nl,
     read_line_to_string(user_input, Preference),
     atom_lowercase(Preference, LowercasePreference),
     get_hospitals(LowercaseLocation, LowercasePreference, HospitalList), nl,
