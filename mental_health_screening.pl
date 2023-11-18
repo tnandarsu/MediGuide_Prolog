@@ -91,11 +91,17 @@ get_response_score(Score) :-
     write('- 2: Occasionally'), nl,
     write('- 3: Often'), nl,
     write('- 4: Almost always'), nl,
-    repeat,
     read_line_to_string(user_input, Response),
+    validate_response(Response, Score).
+
+validate_response(Response, Score) :-
     atom_number(Response, Score),
-    Score >= 0, Score =< 4,
+    between(0, 4, Score), % Ensure the score is between 0 and 4
     !.
+validate_response(_, Score) :-
+    write('Invalid response. Please provide a valid answer from 0 to 4.'), nl,
+    get_response_score(Score).
+
 
 calculate_percentage(Total, Percentage) :-
     scoring_threshold(Threshold),
