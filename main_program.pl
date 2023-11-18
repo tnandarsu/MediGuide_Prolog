@@ -3,6 +3,7 @@
 :- consult('hotlines.pl').
 :- consult('hospitals.pl').
 :- consult('healthcare_tips.pl').
+:- consult('mental_health_screening.pl'). % Include the new file
 
 % greeting, bye, and contains function
 
@@ -23,6 +24,7 @@ response(Statement) :-
      contains_thankyou(Statement) -> write('Your welcome, Is there anything I can assist you?');
      contains_hotline(Statement) -> response_hotline;
      contains_hospitals(Statement) -> response_hospitals;
+     contains_screening(Statement) -> response_mental_health_screening; % Updated to call the mental health screening
      contains_bye(Statement) -> farewell;
      write('I did not understand that. Can you please rephrase?')
     ).
@@ -76,6 +78,9 @@ response_to_diagnose :-
     diagnose(Illness), nl,
     healthcare_tips_for_potential_illnesses(Illness).
 
+response_mental_health_screening :-
+    start_mental_health_screening.
+
 healthcare_tip_for_potential_illness([]).
 healthcare_tips_for_potential_illnesses([PotentialIllness | Rest]) :-
     write('Here are some healthcare tips for '), write(PotentialIllness), write(': '), nl,
@@ -88,6 +93,16 @@ contains_diagnose(Statement) :-
         'diagnosis', 'check up', 'examination', 'health assessment',
         'health check', 'medical checkup', 'physical examination',
         'symptoms analysis', 'health evaluation', 'medical assessment'
+    ]),
+    atom_lowercase(Statement, LowerStatement),
+    atom_lowercase(Word, LowerWord),
+    atom_contains(LowerStatement, LowerWord).
+
+contains_screening(Statement) :-
+    member(Word, [
+        'sad', 'tired', 'not hungry', 'worried', 'nervous', 'panicking',
+        'restless', 'distracted', 'forgetful', 'difficulty focusing', 'obsessive',
+        'anxious', 'depressed', 'overwhelmed', 'no sleep'  
     ]),
     atom_lowercase(Statement, LowerStatement),
     atom_lowercase(Word, LowerWord),
@@ -121,7 +136,7 @@ response_hospitals :-
     trim_whitespace(RawLocation, Location),
     atom_lowercase(Location, LowercaseLocation),
 
-    write('What type of hospitals are you interested in? Do you wanna go to Private or Goverment ones?'), nl,
+    write('What type of hospitals are you interested in? Do you wanna go to Private or Government ones?'), nl,
     read_line_to_string(user_input, Preference),
     atom_lowercase(Preference, LowercasePreference),
     get_hospitals(LowercaseLocation, LowercasePreference, HospitalList), nl,
