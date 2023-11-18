@@ -1,5 +1,3 @@
-% Mental health options
-
 mental_health_screening_options([
     'ADHD',
     'Depression',
@@ -40,7 +38,7 @@ screening_questions('anxiety', [
     'How often do you feel nervous or anxious?',
     'Do you experience sudden, intense feelings of fear or panic?',
     'Are you bothered by excessive worry or overthinking?',
-    'How would you rate your ability to relax on a scale from 0 to 10?',
+    'How often are you feeling afraid, as if something awful might happen?',
     'Do you avoid situations or activities due to fear or anxiety?'
 ]).
 
