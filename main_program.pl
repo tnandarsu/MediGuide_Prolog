@@ -127,7 +127,7 @@ response_hospitals :-
     trim_whitespace(RawLocation, Location),
     atom_lowercase(Location, LowercaseLocation),
 
-    write('What type of hospitals are you interested in? Do you wanna go to private or goverment ones?'), nl,
+    write('What type of hospitals are you interested in? Do you wanna go to private or government ones?'), nl,
     read_line_to_string(user_input, Preference),
     atom_lowercase(Preference, LowercasePreference),
     get_hospitals(LowercaseLocation, LowercasePreference, HospitalList), nl,
