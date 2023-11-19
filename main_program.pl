@@ -28,7 +28,7 @@ response(Statement) :-
      contains_mental(Statement) -> response_mental_health_screening;
      contains_hotline(Statement) -> response_hotline;
      contains_hospitals(Statement) -> response_hospitals;
-     contains_bye(Statement) -> farewell;
+     contains_bye(Statement) -> response_bye;
      write('I did not understand that. Can you please rephrase?')
     ).
 
@@ -41,7 +41,7 @@ response_start :-
     write(Name), 
     write('! How can I assist you today?'), nl.
 
-farewell :-
+response_bye :-
     write('Goodbye! Thank you for using our service. Have a great day.'), nl.
 
 contains_greeting(Statement) :-
