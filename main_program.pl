@@ -51,7 +51,7 @@ contains_greeting(Statement) :-
     atom_contains(LowerStatement, LowerWord).
  
 contains_bye(Statement) :-
-    member(Word, ['bye', 'exit', 'end', 'conclude', 'terminate', 'close', 'finsih']),
+    member(Word, ['bye', 'exit', 'end', 'conclude', 'terminate', 'close', 'finish']),
     atom_lowercase(Statement, LowerStatement),
     atom_lowercase(Word, LowerWord),
     atom_contains(LowerStatement, LowerWord).
